@@ -18,30 +18,47 @@ import random
 # Messages will be serialized as JSON 
 def serializer(message):
     return json.dumps(message)
-Broker = "1003"
+Broker = '1001'
 bootstrap_server = Broker
 
 # function produce_msgs starts producing messages with Faker
 # def produce_msgs(hostname='localhost',
 #                  port='9092',
-topic_name='Registered_Demo_User'         
+topic_name='Kafka-demo'   
+Port = 'PLAINTEXT:9092'      
 #                  nr_messages=2,                     # Number of messages to produce (0 for unlimited)
 #                  max_waiting_time_in_sec=5):
-
-Producer = KafkaProducer(bootstrap_servers = ['localhost:9092'],
-                            #  topic = ['Registered_Demo_User'],
-                            value_serializer = lambda x:json.dumps(x).encode('utf-8')
+def get_partition(key,all,available): # Sending the data to only one partition in the broker 
+    return 0
+Producer = KafkaProducer(bootstrap_servers = ['localhost:9092' ],
+                            # Broker = '1001',
+                            value_serializer = lambda x:json.dumps(x).encode('utf-8'),
+                            partitioner = get_partition,
+                            acks='all',
+                            retries = 'restart'
                             )
 if __name__ == "__main__":
         while 1 == 1:
             Registered_users = get_registered_user()
             data = Registered_users
-            # print(data)
-            print("Sending Messages In:")
-            Producer.send("Registered_Demo_User",data)
+            print(data)
+
+#             print("sending message...")
+
+#             future = Producer(topic_name,data)
+#             Producer.flush()
+#             future.get(timeout=60)
+#             print("message sent successfully...")
+# # return {'status_code':200, 'error':None}
+
+            print(f'Producing message @{datetime.now()}| Dataa = str{(data)}')
+            # print("Sending Messages In:")
+            Producer.send('Dataa',data)
             time.sleep(2.2)
-# produce_msgs()
-        # print("Message Sent",Registered_users)
+            Producer.flush()
+            # Producer.close()
+           
+
     
 
 # Kafka Producer to single topic with two partitions
